@@ -1,0 +1,28 @@
+{
+    "name": "revosystems/sageLiveApi",
+    "description": "Api to integrate with Sage.",
+    "type": "library",
+    "keywords": ["framework", "laravel"],
+    "license": "MIT",
+    "require": {
+        "php": ">=5.6.4",
+        "guzzlehttp/guzzle": "^6.2",
+        "kitetail/zttp": "^0.1.0"
+    },
+    "require-dev": {
+        "fzaninotto/faker": "~1.4",
+        "mockery/mockery": "0.9.*",
+        "phpunit/phpunit": "~5.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "RevoSystems\\SageLiveApi\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "stable"
+}
