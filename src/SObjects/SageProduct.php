@@ -1,8 +1,8 @@
 <?php
 
-namespace App\SObjects;
+namespace RevoSystems\SageLiveApi\SObjects;
 
-use App\SageResource;
+use RevoSystems\SageLiveApi\SageResource;
 
 class SageProduct extends SageResource {
 

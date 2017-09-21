@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace RevoSystems\SageLiveApi;
 
 
 class SageParentResource extends SageResource {

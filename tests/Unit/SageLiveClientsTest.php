@@ -2,22 +2,23 @@
 
 namespace Tests\Unit;
 
-use App\SObjects\SageClient;
+use RevoSystems\SageLiveApi\SObjects\SageClient;
 
 class SageLiveClientsTest extends SageLiveBaseTest {
 
     /** @test */
     public function can_create_sage_client() {
         $this->sageLogin();
-        $clients_count = SageClient::count();
+        $clientResource = (new SageClient($this->sageApi));
+        $clients_count = $clientResource->count();
 
-        $this->object = (new SageClient([
+        $this->object = (new SageClient($this->sageApi, [
             "Name" => "Jordi",
         ]))->create();
 
         $this->assertNotFalse( $this->object->id );
         $this->assertNotEmpty( $this->object->tags );
-        $this->assertEquals( $clients_count + 1, SageClient::count());
+        $this->assertEquals( $clients_count + 1, $clientResource->count());
     }
 
     /** @test */

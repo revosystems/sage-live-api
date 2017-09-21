@@ -1,8 +1,8 @@
 <?php
 
-namespace App\SObjects;
+namespace RevoSystems\SageLiveApi\SObjects;
 
-use App\SageParentResource;
+use RevoSystems\SageLiveApi\SageParentResource;
 
 class SageTransaction extends SageParentResource {
 

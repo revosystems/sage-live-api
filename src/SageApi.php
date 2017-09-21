@@ -1,8 +1,8 @@
 <?php
 
-namespace App;
+namespace RevoSystems\SageLiveApi;
 
-use App\Exceptions\WrongSageAccessTokenException;
+use RevoSystems\SageLiveApi\Exceptions\WrongSageAccessTokenException;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Zttp\Zttp;
@@ -11,6 +11,9 @@ class SageApi {
 
     const SAGE_URL = "salesforce.com";
 
+    /**
+     * @var string instance where you sage account is in
+     */
     protected $instance;
     protected $client_secret;
     protected $client_id;

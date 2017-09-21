@@ -2,11 +2,11 @@
 
 namespace Tests\Unit;
 
-use App\SObjects\SageClient;
-use App\SObjects\SageTransactionItem;
-use App\SObjects\SageProduct;
-use App\SObjects\SageTransaction;
-use App\SObjects\SageTransactionType;
+use RevoSystems\SageLiveApi\SObjects\SageClient;
+use RevoSystems\SageLiveApi\SObjects\SageTransactionItem;
+use RevoSystems\SageLiveApi\SObjects\SageProduct;
+use RevoSystems\SageLiveApi\SObjects\SageTransaction;
+use RevoSystems\SageLiveApi\SObjects\SageTransactionType;
 
 class SageLiveTransactionsTest extends SageLiveBaseTest {
 

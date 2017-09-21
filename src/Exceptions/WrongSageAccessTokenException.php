@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Exceptions;
+namespace RevoSystems\SageLiveApi\Exceptions;
 
 class WrongSageAccessTokenException extends \Exception {
 

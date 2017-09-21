@@ -1,8 +1,8 @@
 <?php
 
-namespace App\SObjects;
+namespace RevoSystems\SageLiveApi\SObjects;
 
-use App\SageItemResource;
+use RevoSystems\SageLiveApi\SageItemResource;
 
 class SageTransactionItem extends SageItemResource {
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Validators;
+namespace RevoSystems\SageLiveApi\Validators;
 
 class SageValidator{
 

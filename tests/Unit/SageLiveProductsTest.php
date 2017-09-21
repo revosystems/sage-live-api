@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\SObjects\SageProduct;
+use RevoSystems\SageLiveApi\SObjects\SageProduct;
 
 class SageLiveProductsTest extends SageLiveBaseTest {
 

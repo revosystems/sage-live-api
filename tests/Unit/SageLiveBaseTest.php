@@ -2,17 +2,25 @@
 
 namespace Tests\Unit;
 
-use App\SageApi;
-use Tests\TestCase;
+use Dotenv\Dotenv;
+use PHPUnit\Framework\TestCase;
+use RevoSystems\SageLiveApi\SageApi;
 
 class SageLiveBaseTest extends TestCase {
     protected $object;
+    protected $sageApi = null;
 
     public function setUp() {
         parent::setUp();
-        app()->singleton(SageApi::class, function(){
-           return new SageApi(env('SAGE_INSTANCE'), env('CLIENT_ID'), env('CLIENT_SECRET'));
-        });
+        $this->loadEnv();
+        $this->sageApi = $this->getSageApi();
+    }
+
+
+    public function getSageApi() {
+        if ( ! $this->sageApi )
+            $this->sageApi = new SageApi(getenv('SAGE_INSTANCE'), getenv('CLIENT_ID'), getenv('CLIENT_SECRET'));
+        return $this->sageApi;
     }
 
     public function tearDown() {
@@ -21,12 +29,19 @@ class SageLiveBaseTest extends TestCase {
     }
 
     protected function sageLogin(){
-        app(SageApi::class)->login(env('TEST_SAGE_USERNAME'), env('TEST_SAGE_PASSWORD'), env('TEST_SAGE_SECURITY_TOKEN'));
+        return $this->sageApi->login(getenv('TEST_SAGE_USERNAME'), getenv('TEST_SAGE_PASSWORD'), getenv('TEST_SAGE_SECURITY_TOKEN'));
     }
 
     /** @test */
     public function can_create_sage_product() {
         $this->assertTrue(true);
+    }
+
+    /**
+     * @return array
+     */
+    private function loadEnv() {
+        return (new Dotenv(__DIR__, "../../.env"))->load();
     }
 
 }

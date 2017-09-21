@@ -1,10 +1,10 @@
 <?php
 
-namespace App;
+namespace RevoSystems\SageLiveApi;
 
-use App\SObjects\SageDimension;
-use App\SObjects\SageTag;
-use App\Validators\SageValidator;
+use RevoSystems\SageLiveApi\SObjects\SageDimension;
+use RevoSystems\SageLiveApi\SObjects\SageTag;
+use RevoSystems\SageLiveApi\Validators\SageValidator;
 
 class SageResource {
 
@@ -16,33 +16,33 @@ class SageResource {
     public $id;
     public $tags;
 
-    public function __construct($json = null){
-        $this->api = app(SageApi::class);
+    public function __construct(SageApi $api, $json = null){
+        $this->api = $api;
         $this->attributes = collect($json);
         $this->fields = collect($this->fields);
     }
 
-    public static function make() {
-        return new static();
+    public static function make(SageApi $api) {
+        return new static($api);
     }
 
     public function validate(){
         return (new SageValidator($this->fields, $this->attributes))->validate();
     }
 
-    public static function all(){
-        $attributes = collect(app(SageApi::class)->get(static::RESOURCE_NAME)["records"]);
+    public function all(){
+        $attributes = collect($this->api->get(static::RESOURCE_NAME)["records"]);
         return $attributes->map(function($data){
             return new static($data);
         });
     }
 
-    public static function count(){
-        return app(SageApi::class)->get(static::RESOURCE_NAME)["totalSize"];
+    public function count(){
+        return $this->api->get(static::RESOURCE_NAME)["totalSize"];
     }
 
     public function countWithFields(){
-        $resource = app(SageApi::class)->get(static::RESOURCE_NAME, $this->fields);
+        $resource = $this->api->get(static::RESOURCE_NAME, $this->fields);
         try {
             return $resource["totalSize"];
         } catch (\Exception $e) {
@@ -50,15 +50,15 @@ class SageResource {
         }
     }
 
-    public static function find($id){
+    public function find($id){
         return new static(
-            app(SageApi::class)->find(static::RESOURCE_NAME, $id)
+            $this->api->find(static::RESOURCE_NAME, $id)
         );
     }
 
-    public static function findByUID($uid){
+    public function findByUID($uid){
         return new static(
-            app(SageApi::class)->findByUID(static::RESOURCE_NAME, $uid)['records'][0]
+            $this->api->findByUID(static::RESOURCE_NAME, $uid)['records'][0]
         );
     }
 
@@ -71,8 +71,8 @@ class SageResource {
         if ( $this->tag ) array_push($tags, $this->tag);
 
         $this->tags = collect($tags)->map(function ($tag) {
-            return (new SageTag([
-                "s2cor__Dimension__c"   => SageDimension::findByUID($tag["UID"])->Id,
+            return (new SageTag($this->api, [
+                "s2cor__Dimension__c"   => (new SageDimension($this->api))->findByUID($tag["UID"])->Id,
                 "s2cor__Active__c"      => 1,
                 $tag["Object"]          => $this->Id,
             ]))->create();
@@ -84,7 +84,7 @@ class SageResource {
         $this->tags->each(function ($tag) {
             $tag->destroy();
         });
-        app(SageApi::class)->delete(static::RESOURCE_NAME, $this->Id);
+        $this->api->delete(static::RESOURCE_NAME, $this->Id);
     }
 
     function __get($name) {
