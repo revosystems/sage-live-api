@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use RevoSystems\SageLiveApi\SageApi;
 
 class SageLiveBaseTest extends TestCase {
+
     protected $object;
     protected $sageApi = null;
 
@@ -30,11 +31,6 @@ class SageLiveBaseTest extends TestCase {
 
     protected function sageLogin(){
         return $this->sageApi->login(getenv('TEST_SAGE_USERNAME'), getenv('TEST_SAGE_PASSWORD'), getenv('TEST_SAGE_SECURITY_TOKEN'));
-    }
-
-    /** @test */
-    public function can_create_sage_product() {
-        $this->assertTrue(true);
     }
 
     /**

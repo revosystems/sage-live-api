@@ -33,7 +33,7 @@ class SageResource {
     public function all(){
         $attributes = collect($this->api->get(static::RESOURCE_NAME)["records"]);
         return $attributes->map(function($data){
-            return new static($data);
+            return new static($this->api, $data);
         });
     }
 
@@ -51,13 +51,13 @@ class SageResource {
     }
 
     public function find($id){
-        return new static(
+        return new static($this->api,
             $this->api->find(static::RESOURCE_NAME, $id)
         );
     }
 
     public function findByUID($uid){
-        return new static(
+        return new static($this->api,
             $this->api->findByUID(static::RESOURCE_NAME, $uid)['records'][0]
         );
     }
