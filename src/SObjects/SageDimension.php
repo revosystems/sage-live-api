@@ -4,8 +4,8 @@ namespace RevoSystems\SageLiveApi\SObjects;
 
 use RevoSystems\SageLiveApi\SageResource;
 
-class SageDimension extends SageResource {
-
+class SageDimension extends SageResource
+{
     const RESOURCE_NAME = "s2cor__Sage_ACC_Dimension__c";
 
     protected $fields = [

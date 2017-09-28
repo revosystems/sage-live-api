@@ -4,11 +4,11 @@ namespace RevoSystems\SageLiveApi\SObjects;
 
 use RevoSystems\SageLiveApi\SageParentResource;
 
-class SageTransaction extends SageParentResource {
-
+class SageTransaction extends SageParentResource
+{
     const RESOURCE_NAME = "s2cor__Sage_INV_Trade_Document__c";
-    protected $tag = ["UID" => 'SalesInvoiceNumber', "Object" => "s2cor__Transaction__c"];
-    protected $fields = [
+    protected $tag      = ["UID" => 'SalesInvoiceNumber', "Object" => "s2cor__Transaction__c"];
+    protected $fields   = [
         "s2cor__Account__c"                             => [ "required" => false, "type" => "Lookup(Account)"       ],
         "s2cor__Account_Dimension__c"                   => [ "required" => false, "type" => "Lookup(Dimension)"     ],
         "s2cor__Account_Tag__c"                         => [ "required" => false, "type" => "Lookup(Dimension Tag)" ],
