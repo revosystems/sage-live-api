@@ -4,10 +4,10 @@ namespace RevoSystems\SageLiveApi\SObjects;
 
 use RevoSystems\SageLiveApi\SageResource;
 
-class SageTransactionType extends SageResource {
-
+class SageTransactionType extends SageResource
+{
     const RESOURCE_NAME = "s2cor__Sage_INV_Trade_Document_Type__c";
-    protected $fields = [
+    protected $fields   = [
         "s2cor__Account_Dimension__c"                   => [ "required" => false, "type" => "Lookup(Dimension)"     ],
         "s2cor__Account_Type_Filter_1__c"               => [ "required" => false, "type" => "Text(255)"             ],
         "s2cor__Account_Type_Filter_2__c"               => [ "required" => false, "type" => "Text(255)"             ],

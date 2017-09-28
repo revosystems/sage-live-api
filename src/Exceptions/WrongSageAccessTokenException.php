@@ -2,6 +2,6 @@
 
 namespace RevoSystems\SageLiveApi\Exceptions;
 
-class WrongSageAccessTokenException extends \Exception {
-
+class WrongSageAccessTokenException extends \Exception
+{
 }

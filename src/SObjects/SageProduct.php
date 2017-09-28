@@ -4,10 +4,10 @@ namespace RevoSystems\SageLiveApi\SObjects;
 
 use RevoSystems\SageLiveApi\SageResource;
 
-class SageProduct extends SageResource {
-
+class SageProduct extends SageResource
+{
     const RESOURCE_NAME = "Product2";
-    protected $tag = ["UID" => 'Product', "Object" => "s2cor__Product__c"];
+    protected $tag      = ["UID" => 'Product', "Object" => "s2cor__Product__c"];
     protected $fields   = [
         "CreatedById"               => ["required" => false, "type" => "Lookup(User)"                   ],
         "Description"               => ["required" => false, "type" => "Text Area(4000)"                ],

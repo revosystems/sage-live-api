@@ -2,13 +2,13 @@
 
 namespace Tests\Unit;
 
-use RevoSystems\SageLiveApi\SageApi;
 use RevoSystems\SageLiveApi\SObjects\SageProduct;
 
-class SageLiveProductsTest extends SageLiveBaseTest {
-
+class SageLiveProductsTest extends SageLiveBaseTest
+{
     /** @test */
-    public function can_create_sage_product() {
+    public function can_create_sage_product()
+    {
         $this->sageLogin();
         $clientResource = (new SageProduct($this->sageApi));
         $products_count = $clientResource->count();
@@ -18,13 +18,14 @@ class SageLiveProductsTest extends SageLiveBaseTest {
             "IsActive"  => 1,
         ]))->create();
 
-        $this->assertNotNull( $this->object->Id );
-        $this->assertNotEmpty( $this->object->tags );
-        $this->assertEquals( $products_count + 1, $clientResource->count());
+        $this->assertNotNull($this->object->Id);
+        $this->assertNotEmpty($this->object->tags);
+        $this->assertEquals($products_count + 1, $clientResource->count());
     }
 
     /** @test */
-    public function can_get_sage_products() {
+    public function can_get_sage_products()
+    {
         $this->sageLogin();
 
         $this->object = (new SageProduct($this->sageApi, [
@@ -36,7 +37,8 @@ class SageLiveProductsTest extends SageLiveBaseTest {
     }
 
     /** @test */
-    public function can_see_a_sage_product() {
+    public function can_see_a_sage_product()
+    {
         $this->sageLogin();
         $this->object = (new SageProduct($this->sageApi, [
             "Name"      => "Nike Tomaleos",
@@ -44,24 +46,24 @@ class SageLiveProductsTest extends SageLiveBaseTest {
         ]))->create();
 
         $productRetrieved = (new SageProduct($this->sageApi))->find($this->object->Id);
-        $this->assertEquals($this->object->Id,    $productRetrieved->Id);
+        $this->assertEquals($this->object->Id, $productRetrieved->Id);
         $this->assertEquals('Nike Tomaleos', $productRetrieved->Name);
     }
 
     /** @test */
-    public function can_delete_sage_product() {
+    public function can_delete_sage_product()
+    {
         $this->sageLogin();
         $this->object = (new SageProduct($this->sageApi, [
             "Name"      => "Nike Tomaleos",
             "IsActive"  => 1,
         ]))->create();
-        $sageResource = (new SageProduct($this->sageApi));
+        $sageResource   = (new SageProduct($this->sageApi));
         $products_count = $sageResource->count();
 
         $this->object->destroy();
         $actual_products_count =  $sageResource->count();
 
-        $this->assertEquals( $products_count - 1, $actual_products_count);
+        $this->assertEquals($products_count - 1, $actual_products_count);
     }
-
 }
