@@ -1,5 +1,5 @@
 {
-    "name": "revosystems/sageLiveApi",
+    "name": "revosystems/sage-live-api",
     "description": "Api to integrate with Sage.",
     "type": "library",
     "keywords": ["framework", "laravel"],
