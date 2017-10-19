@@ -25,6 +25,18 @@ class SageLiveTransactionsTest extends SageLiveBaseTest
         $this->client->destroy();
     }
 
+    ///** @test */
+    public function can_delete_sage_transactions()
+    {
+        $this->sageLogin();
+
+        (new SageTransaction($this->sageApi))->all()->each(function ($transaction) {
+            $transaction->destroy();
+        });
+        $this->assertEquals(0, (new SageTransaction($this->sageApi))->count());
+        dd();
+    }
+
     /** @test */
     public function can_create_sage_transaction()
     {

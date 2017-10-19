@@ -92,8 +92,16 @@ class SageApi
 
     public function delete($resource, $id)
     {
-        return Zttp::withHeaders($this->getAuthHeaders())
-            ->delete($this->urlForResource($resource) . '/' . $id)->status() == Response::HTTP_NO_CONTENT;
+        $response = Zttp::withHeaders($this->getAuthHeaders())
+            ->delete($this->urlForResource($resource) . '/' . $id);
+        $statusOk = $response == Response::HTTP_NO_CONTENT;
+        if (! $statusOk) {
+            \Log::warning("Failed deleting resource with id {$id}", [
+                'status'    => $response->status(),
+                'body'      => $response->body()
+            ]);
+        }
+        return $statusOk;
     }
 
     private function validateResponse($response, $resource)
