@@ -22,20 +22,6 @@ class SageLiveClientsTest extends SageLiveBaseTest
         $this->assertEquals($clients_count + 1, $clientResource->count());
     }
 
-    ///** @test */
-    public function can_delete_sage_clients()
-    {
-        $this->sageLogin();
-
-        (new SageClient($this->sageApi))->all()->each(function ($client) {
-            if (str_contains($client->Name, "Jordi")) {
-                $client->destroy();
-            }
-        });
-        $this->assertEquals(9, (new SageClient($this->sageApi))->count());
-        dd();
-    }
-
     /** @test */
     public function can_get_sage_clients()
     {
@@ -74,5 +60,6 @@ class SageLiveClientsTest extends SageLiveBaseTest
         $actual_clients_count =  (new SageClient($this->sageApi))->count();
 
         $this->assertEquals($clients_count - 1, $actual_clients_count);
+        $this->object = null;
     }
 }
