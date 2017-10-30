@@ -37,11 +37,9 @@ class SageParentResource extends SageResource
 
     public function destroy()
     {
-        if ($this->items) {
-            $this->items->each(function ($item) {
-                $item->destroy();
-            });
-        }
+        collect($this->items)->each(function ($item) {
+            $item->destroy();
+        });
         parent::destroy();
     }
 }
