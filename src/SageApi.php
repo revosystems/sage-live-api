@@ -18,10 +18,11 @@ class SageApi
     public $refresh_token;
     public $instance_url;
 
-    public function __construct($client_id, $client_secret)
+    public function __construct($client_id, $client_secret, $access_token = null)
     {
         $this->client_id        = $client_id;
         $this->client_secret    = $client_secret;
+        $this->access_token     = $access_token;
     }
 
     public function loginBasic($username, $password, $securityToken)
