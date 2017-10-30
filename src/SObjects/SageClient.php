@@ -7,6 +7,8 @@ use RevoSystems\SageLiveApi\SageResource;
 class SageClient extends SageResource
 {
     const RESOURCE_NAME = "Account";
+    public $lookUpField = "s2cor__Sage_UID__c";
+
     protected $tag      = ["UID" => 'Customer', "Object" => "s2cor__Account__c"];
     protected $fields   = [
         "AccountNumber"                          => ["required" => false, "type" => "Text(40)"],
