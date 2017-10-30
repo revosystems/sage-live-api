@@ -21,7 +21,7 @@ class SageLiveBaseTest extends TestCase
     public function getSageApi()
     {
         if (! $this->sageApi) {
-            $this->sageApi = new SageApi(getenv('SAGE_INSTANCE'), getenv('CLIENT_ID'), getenv('CLIENT_SECRET'));
+            $this->sageApi = new SageApi(getenv('CLIENT_ID'), getenv('CLIENT_SECRET'));
         }
         return $this->sageApi;
     }
@@ -36,7 +36,7 @@ class SageLiveBaseTest extends TestCase
 
     protected function sageLogin()
     {
-        return $this->sageApi->login(getenv('TEST_SAGE_USERNAME'), getenv('TEST_SAGE_PASSWORD'), getenv('TEST_SAGE_SECURITY_TOKEN'));
+        return $this->sageApi->loginBasic(getenv('TEST_SAGE_USERNAME'), getenv('TEST_SAGE_PASSWORD'), getenv('TEST_SAGE_SECURITY_TOKEN'));
     }
 
     /**

@@ -94,9 +94,11 @@ class SageResource
 
     public function destroy()
     {
-        $this->tags->each(function ($tag) {
-            $tag->destroy();
-        });
+        if ($this->tags) {
+            $this->tags->each(function ($tag) {
+                $tag->destroy();
+            });
+        }
         $this->api->delete(static::RESOURCE_NAME, $this->Id);
     }
 

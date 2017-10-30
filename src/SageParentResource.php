@@ -8,8 +8,10 @@ class SageParentResource extends SageResource
 
     public function __construct(SageApi $api, $json = null)
     {
-        $this->items = collect($json["items"]);
-        unset($json["items"]);
+        if (isset($json["items"])) {
+            $this->items = collect($json["items"]);
+            unset($json["items"]);
+        }
         parent::__construct($api, $json);
     }
 
@@ -35,9 +37,11 @@ class SageParentResource extends SageResource
 
     public function destroy()
     {
-        $this->items->each(function ($item) {
-            $item->destroy();
-        });
+        if ($this->items) {
+            $this->items->each(function ($item) {
+                $item->destroy();
+            });
+        }
         parent::destroy();
     }
 }

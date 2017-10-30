@@ -65,5 +65,6 @@ class SageLiveProductsTest extends SageLiveBaseTest
         $actual_products_count =  $sageResource->count();
 
         $this->assertEquals($products_count - 1, $actual_products_count);
+        $this->object = null;
     }
 }

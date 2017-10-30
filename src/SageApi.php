@@ -9,56 +9,78 @@ use Zttp\Zttp;
 
 class SageApi
 {
-    const SAGE_URL = "salesforce.com";
+    const SAGE_LOGIN = "https://login.salesforce.com";
 
-    /**
-     * @var string instance where you sage account is in
-     */
-    protected $instance;
-    protected $client_secret;
     protected $client_id;
+    protected $client_secret;
 
     public $access_token;
+    public $refresh_token;
+    public $instance_url;
 
-    public function __construct($instance, $client_id, $client_secret)
+    public function __construct($client_id, $client_secret)
     {
-        $this->instance         = $instance;
-        $this->client_secret    = $client_secret;
         $this->client_id        = $client_id;
+        $this->client_secret    = $client_secret;
     }
 
-    public function login($username, $password, $securityToken)
+    public function loginBasic($username, $password, $securityToken)
     {
-        $response = Zttp::asFormParams()->post("https://login." . static::SAGE_URL . "/services/oauth2/token", [
+        $response = $this->parseResponse(Zttp::asFormParams()->post(static::SAGE_LOGIN . "/services/oauth2/token", [
             "grant_type"    => 'password',
             "client_id"     => $this->client_id,
             "client_secret" => $this->client_secret,
             "username"      => $username,
             "password"      => $password.$securityToken,
-        ]);
+        ]));
+        $this->access_token     = $response["access_token"];
+        $this->instance_url     = $response["instance_url"];
+        return $this;
+    }
+
+    public function loginOauth2($redirect_uri)
+    {
+        return redirect(static::SAGE_LOGIN . "/services/oauth2/authorize?response_type=code&client_id={$this->client_id}&redirect_uri={$redirect_uri}");
+    }
+
+    public function loginCallback($redirect_uri, $code)
+    {
+        $response = $this->parseResponse(Zttp::asFormParams()->post(static::SAGE_LOGIN . "/services/oauth2/token", [
+            "grant_type"    => "authorization_code",
+            "client_id"     => $this->client_id,
+            "client_secret" => $this->client_secret,
+            "redirect_uri"  => $redirect_uri,
+            "code"          => $code
+        ]));
+        $this->access_token     = $response["access_token"];
+        $this->refresh_token    = $response["refresh_token"];
+        $this->instance_url     = $response["instance_url"];
+        return $this;
+    }
+
+    private function parseResponse($response)
+    {
         if ($response->status() != 200) {
             throw new WrongSageAccessTokenException();
         }
-
-        $this->access_token = $response->json()["access_token"];
-        return $this;
+        return $response->json();
     }
 
     public function getAuthHeaders()
     {
         return [
-            "Authorization" => "Bearer ".$this->access_token, "Content-Type" => "application/json"
+            "Authorization" => "Bearer {$this->access_token}", "Content-Type" => "application/json"
         ];
     }
 
     public function urlForResource($resource)
     {
-        return "https://{$this->instance}." . static::SAGE_URL . "/services/data/v40.0/sobjects/{$resource}";
+        return "{$this->instance_url}/services/data/v40.0/sobjects/{$resource}";
     }
 
     public function urlForQueries()
     {
-        return "https://{$this->instance}." . static::SAGE_URL . "/services/data/v40.0/query/";
+        return "{$this->instance_url}/services/data/v40.0/query/";
     }
 
     public function find($resource, $id)

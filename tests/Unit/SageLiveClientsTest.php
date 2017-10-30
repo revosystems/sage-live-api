@@ -60,5 +60,6 @@ class SageLiveClientsTest extends SageLiveBaseTest
         $actual_clients_count =  (new SageClient($this->sageApi))->count();
 
         $this->assertEquals($clients_count - 1, $actual_clients_count);
+        $this->object = null;
     }
 }
