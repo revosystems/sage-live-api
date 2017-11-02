@@ -89,14 +89,14 @@ class SageApi
     public function find($resource, $id)
     {
         return Zttp::withHeaders($this->getAuthHeaders())
-            ->get($this->urlForResource($resource . '/' . $id))
+            ->get($this->urlForResource("{$resource}/{$id}"))
             ->json();
     }
 
     public function findByUID($resource, $uid, $fields = ["Id", "Name"])
     {
         return Zttp::withHeaders($this->getAuthHeaders())
-            ->get($this->urlForQueries() . "?q=SELECT+" . $this->getCollection($fields) . "+from+{$resource}+WHERE+{$resource->lookUpField}+LIKE+'{$uid}'+AND+isDeleted+=+false")
+            ->get($this->urlForQueries() . "?q=SELECT+" . $this->getCollection($fields) . "+from+{$resource}+WHERE+s2cor__UID__c+LIKE+'{$uid}'+AND+isDeleted+=+false")
             ->json();
     }
 
@@ -118,7 +118,7 @@ class SageApi
     public function delete($resource, $id)
     {
         return Zttp::withHeaders($this->getAuthHeaders())
-                ->delete($this->urlForResource($resource) . '/' . $id)->status() == Response::HTTP_NO_CONTENT;
+                ->delete($this->urlForResource("{$resource}/{$id}"))->status() == Response::HTTP_NO_CONTENT;
     }
 
     private function validateResponse($response, $resource)

@@ -16,7 +16,6 @@ class SageResource
 
     public $id;
     public $tags;
-    public $lookUpField = 's2cor__UID__c';
 
     public function __construct(SageApi $api, $json = null)
     {
