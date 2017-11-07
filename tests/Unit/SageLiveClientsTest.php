@@ -6,6 +6,16 @@ use RevoSystems\SageLiveApi\SObjects\SageClient;
 
 class SageLiveClientsTest extends SageLiveBaseTest
 {
+//    /** @test */
+    public function can_delete_all_sage_clients()
+    {
+        $this->sageLogin();
+        (new SageClient($this->sageApi))->all()->each(function ($client) {
+            $client->destroy();
+        });
+        $this->object = null;
+    }
+
     /** @test */
     public function can_create_sage_client()
     {

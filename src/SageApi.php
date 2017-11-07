@@ -20,20 +20,19 @@ class SageApi
 
     public function __construct($client_id, $client_secret)
     {
-        $this->client_id     = $client_id;
-        $this->client_secret = $client_secret;
+        $this->client_id        = $client_id;
+        $this->client_secret    = $client_secret;
     }
 
     public function loginBasic($username, $password, $securityToken)
     {
-        $response = $this->parseResponse(Zttp::asFormParams()->post(static::SAGE_LOGIN . "/services/oauth2/token", [
+        return $this->parseResponse(Zttp::asFormParams()->post(static::SAGE_LOGIN . "/services/oauth2/token", [
             "grant_type"    => 'password',
             "client_id"     => $this->client_id,
             "client_secret" => $this->client_secret,
             "username"      => $username,
             "password"      => $password . $securityToken,
         ]));
-        return $this->setInstance($response["access_token"], $response["instance_url"]);
     }
 
     public function loginOauth2($redirect_uri)
@@ -66,7 +65,7 @@ class SageApi
             throw new WrongSageAccessTokenException();
         }
         $response = $response->json();
-        return $this->setInstance($response["access_token"], $response["instance_url"], $response["refresh_token"]);
+        return $this->setInstance($response["access_token"], $response["instance_url"], $response["refresh_token"] ?? "");
     }
 
     public function getAuthHeaders()
@@ -117,8 +116,9 @@ class SageApi
 
     public function delete($resource, $id)
     {
-        return Zttp::withHeaders($this->getAuthHeaders())
-                ->delete($this->urlForResource("{$resource}/{$id}"))->status() == Response::HTTP_NO_CONTENT;
+        $response = Zttp::withHeaders($this->getAuthHeaders())
+                ->delete($this->urlForResource("{$resource}/{$id}"));
+        return $response->status() == Response::HTTP_NO_CONTENT;
     }
 
     private function validateResponse($response, $resource)
