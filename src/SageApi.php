@@ -17,6 +17,7 @@ class SageApi
     public $access_token;
     public $refresh_token;
     public $instance_url;
+    public $log = [];
 
     public function __construct($client_id, $client_secret)
     {
@@ -35,9 +36,9 @@ class SageApi
         ]));
     }
 
-    public function loginOauth2($redirect_uri)
+    public static function getOauth2LoginUri($client_id, $redirect_uri)
     {
-        return redirect(static::SAGE_LOGIN . "/services/oauth2/authorize?response_type=code&client_id={$this->client_id}&redirect_uri={$redirect_uri}");
+        return static::SAGE_LOGIN . "/services/oauth2/authorize?response_type=code&client_id={$client_id}&redirect_uri={$redirect_uri}";
     }
 
     public function loginCallback($redirect_uri, $code)
@@ -94,9 +95,13 @@ class SageApi
 
     public function findByUID($resource, $uid, $fields = ["Id", "Name"])
     {
-        return Zttp::withHeaders($this->getAuthHeaders())
-            ->get($this->urlForQueries() . "?q=SELECT+" . $this->getCollection($fields) . "+from+{$resource}+WHERE+s2cor__UID__c+LIKE+'{$uid}'+AND+isDeleted+=+false")
-            ->json();
+        try {
+            return Zttp::withHeaders($this->getAuthHeaders())
+                ->get($this->urlForQueries() . "?q=SELECT+" . $this->getCollection($fields) . "+from+{$resource}+WHERE+s2cor__UID__c+LIKE+'{$uid}'+AND+isDeleted+=+false")
+                ->json();
+        } catch (\Exception $e) {
+            array_push($this->log, "SAGE-API: Failed to find resource {$resource} with uid {$uid}: {$e->getMessage()}");
+        }
     }
 
     public function get($resource, $fields = ["Id", "Name"])
@@ -117,14 +122,18 @@ class SageApi
     public function delete($resource, $id)
     {
         $response = Zttp::withHeaders($this->getAuthHeaders())
-                ->delete($this->urlForResource("{$resource}/{$id}"));
-        return $response->status() == Response::HTTP_NO_CONTENT;
+            ->delete($this->urlForResource("{$resource}/{$id}"));
+        if ($response->status() != Response::HTTP_NO_CONTENT) {
+            array_push($this->log, "SAGE-API: Failed to delete resource {$resource} with id {$id}: {$response->body()}");
+            return false;
+        }
+        return true;
     }
 
     private function validateResponse($response, $resource)
     {
         if (! array_has($response, "success")) {
-            throw new \Exception("Failed to create resource {$resource} with error: " . json_encode($response));
+            array_push($this->log, "SAGE-API: Failed to create resource {$resource} with error : {$response->body()}");
         }
         return $response;
     }
