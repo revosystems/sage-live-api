@@ -74,7 +74,7 @@ class SageResource
     public function create($tags = [])
     {
         $this->Id = $this->api->post(static::RESOURCE_NAME, $this->validate());
-        return $this->createTags($tags);
+        return $this->Id != "" ? $this->createTags($tags) : $this;
     }
 
     public function createTags($tags = [])

@@ -100,7 +100,7 @@ class SageApi
                 ->get($this->urlForQueries() . "?q=SELECT+" . $this->getCollection($fields) . "+from+{$resource}+WHERE+s2cor__UID__c+LIKE+'{$uid}'+AND+isDeleted+=+false")
                 ->json();
         } catch (\Exception $e) {
-            array_push($this->log, "SAGE-API: Failed to find resource {$resource} with uid {$uid}: {$e->getMessage()}");
+            $this->log("SAGE-API: Failed to find resource {$resource} with uid {$uid}: {$e->getMessage()}");
         }
     }
 
@@ -113,10 +113,10 @@ class SageApi
 
     public function post($resource, $data)
     {
-        $response = Zttp::withHeaders($this->getAuthHeaders())
-            ->post($this->urlForResource($resource), $data instanceof Collection ? $data->toArray() : $data)
-            ->json();
-        return $this->validateResponse($response, $resource)["id"];
+        $data     = $data instanceof Collection ? $data->toArray() : $data;
+        $response = Zttp::withHeaders($this->getAuthHeaders())->post($this->urlForResource($resource), $data);
+        $json     = $this->validateResponse($response, $resource);
+        return $json ? $json["id"] : "";
     }
 
     public function delete($resource, $id)
@@ -124,18 +124,27 @@ class SageApi
         $response = Zttp::withHeaders($this->getAuthHeaders())
             ->delete($this->urlForResource("{$resource}/{$id}"));
         if ($response->status() != Response::HTTP_NO_CONTENT) {
-            array_push($this->log, "SAGE-API: Failed to delete resource {$resource} with id {$id}: {$response->body()}");
+            $this->log("SAGE-API: Failed to delete resource {$resource} with id {$id}: {$response->body()}");
             return false;
         }
         return true;
     }
 
-    private function validateResponse($response, $resource)
+    private function validateResponse($response, $resource, $method = 'create')
     {
-        if (! array_has($response, "success")) {
-            array_push($this->log, "SAGE-API: Failed to create resource {$resource} with error : {$response->body()}");
+        if ($response->status() != 201) {
+            if ($response->status() == 401) {
+                dd('auth needed');
+            }// reauth with refresh token and recall
+            $this->log("SAGE-API: Failed to {$method} resource {$resource} with error {$response->status()}: {$response->body()}");
+            return false;
         }
-        return $response;
+        return $response->json();
+    }
+
+    private function log($message)
+    {
+        array_push($this->log, $message);
     }
 
     private function getCollection($fields)
