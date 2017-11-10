@@ -77,6 +77,13 @@ class SageResource
         return $this->Id != "" ? $this->createTags($tags) : $this;
     }
 
+    public function update($attributes)
+    {
+        $this->attributes = collect($attributes);  // TODO: CHECK ID $this->attributes->merge($attributes);
+        $this->api->patch(static::RESOURCE_NAME, $this->Id, $this->validate());
+        return $this;
+    }
+
     public function createTags($tags = [])
     {
         if ($this->tag) {

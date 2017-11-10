@@ -76,9 +76,9 @@ class SageApi
         ];
     }
 
-    public function urlForResource($resource)
+    public function urlForResource($resource, $id = '')
     {
-        return "{$this->instance_url}/services/data/v40.0/sobjects/{$resource}";
+        return "{$this->instance_url}/services/data/v40.0/sobjects/{$resource}/{$id}";
     }
 
     public function urlForQueries()
@@ -117,6 +117,14 @@ class SageApi
         $response = Zttp::withHeaders($this->getAuthHeaders())->post($this->urlForResource($resource), $data);
         $json     = $this->validateResponse($response, $resource);
         return $json ? $json["id"] : "";
+    }
+
+    public function patch($resource, $id, $data)
+    {
+        $data     = $data instanceof Collection ? $data->toArray() : $data;
+        $response = Zttp::withHeaders($this->getAuthHeaders())->post($this->urlForResource($resource, $id), $data);
+        $json     = $this->validateResponse($response, $resource, 'update');
+        return $json ? $json["id"] : false;
     }
 
     public function delete($resource, $id)

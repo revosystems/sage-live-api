@@ -6,7 +6,7 @@ use RevoSystems\SageLiveApi\SObjects\SageClient;
 
 class SageLiveClientsTest extends SageLiveBaseTest
 {
-//    /** @test */
+    /** @test */
     public function can_delete_all_sage_clients()
     {
         $this->sageLogin();
@@ -30,6 +30,26 @@ class SageLiveClientsTest extends SageLiveBaseTest
         $this->assertNotFalse($this->object->id);
         $this->assertNotEmpty($this->object->tags);
         $this->assertEquals($clients_count + 1, $clientResource->count());
+    }
+
+    /** @test */
+    public function can_update_sage_client()
+    {
+        $this->sageLogin();
+        $clientResource = (new SageClient($this->sageApi));
+        $this->object   = (new SageClient($this->sageApi, [
+            "Name" => "Jordi",
+        ]))->create();
+        $clients_count  = $clientResource->count();
+
+        $this->object->update([
+            "Name" => "Joan"
+        ]);
+
+        $this->assertNotFalse($this->object->id);
+        $this->assertNotEmpty($this->object->tags);
+        $this->assertEquals("Joan", $this->object->Name);
+        $this->assertEquals($clients_count, $clientResource->count());
     }
 
     /** @test */
