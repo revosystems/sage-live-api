@@ -29,9 +29,9 @@ class SageResource
         return new static($api);
     }
 
-    public function validate()
+    public function validate($attributes = false, $withRequired = true)
     {
-        return (new SageValidator($this->fields, $this->attributes))->validate();
+        return (new SageValidator($this->fields, $attributes ? : $this->attributes))->validate($withRequired);
     }
 
     public function all()
@@ -79,8 +79,7 @@ class SageResource
 
     public function update($attributes)
     {
-        $this->attributes = collect($attributes);  // TODO: CHECK ID $this->attributes->merge($attributes);
-        $this->api->patch(static::RESOURCE_NAME, $this->Id, $this->validate());
+        $this->api->patch(static::RESOURCE_NAME, $this->Id, $this->validate(collect($attributes), false));
         return $this;
     }
 

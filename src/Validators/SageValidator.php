@@ -13,9 +13,11 @@ class SageValidator
         $this->attributes = $attributes;
     }
 
-    public function validate()
+    public function validate($withRequired = true)
     {
-        $this->validateRequiredFields();
+        if ($withRequired) {
+            $this->validateRequiredFields();
+        }
         return $this->filterInvalidFields();
     }
 

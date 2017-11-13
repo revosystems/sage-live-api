@@ -122,7 +122,7 @@ class SageApi
     public function patch($resource, $id, $data)
     {
         $data     = $data instanceof Collection ? $data->toArray() : $data;
-        $response = Zttp::withHeaders($this->getAuthHeaders())->post($this->urlForResource($resource, $id), $data);
+        $response = Zttp::withHeaders($this->getAuthHeaders())->patch($this->urlForResource($resource, $id), $data);
         $json     = $this->validateResponse($response, $resource, 'update');
         return $json ? $json["id"] : false;
     }
@@ -140,11 +140,12 @@ class SageApi
 
     private function validateResponse($response, $resource, $method = 'create')
     {
-        if ($response->status() != 201) {
-            if ($response->status() == 401) {
+        $status = $response->status();
+        if ($status != 201 && $status != 204) {
+            if ($status == 401) {
                 dd('auth needed');
             }// reauth with refresh token and recall
-            $this->log("SAGE-API: Failed to {$method} resource {$resource} with error {$response->status()}: {$response->body()}");
+            $this->log("SAGE-API: Failed to {$method} resource {$resource} with error {$status}: {$response->body()}");
             return false;
         }
         return $response->json();
