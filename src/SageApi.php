@@ -2,22 +2,15 @@
 
 namespace RevoSystems\SageLiveApi;
 
-use RevoSystems\SageLiveApi\Exceptions\WrongSageAccessTokenException;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Zttp\Zttp;
+use Zttp\ZttpResponse;
 
 class SageApi
 {
-    const SAGE_LOGIN = "https://login.salesforce.com";
-
-    protected $client_id;
-    protected $client_secret;
-
-    public $access_token;
-    public $refresh_token;
-    public $instance_url;
-    public $log = [];
+    use SageApiAuthTrait;
+    public $log      = [];
 
     public function __construct($client_id, $client_secret)
     {
@@ -25,72 +18,10 @@ class SageApi
         $this->client_secret    = $client_secret;
     }
 
-    public function loginBasic($username, $password, $securityToken)
-    {
-        return $this->parseResponse(Zttp::asFormParams()->post(static::SAGE_LOGIN . "/services/oauth2/token", [
-            "grant_type"    => 'password',
-            "client_id"     => $this->client_id,
-            "client_secret" => $this->client_secret,
-            "username"      => $username,
-            "password"      => $password . $securityToken,
-        ]));
-    }
-
-    public static function getOauth2LoginUri($client_id, $redirect_uri)
-    {
-        return static::SAGE_LOGIN . "/services/oauth2/authorize?response_type=code&client_id={$client_id}&redirect_uri={$redirect_uri}";
-    }
-
-    public function loginCallback($redirect_uri, $code)
-    {
-        return $this->parseResponse(Zttp::asFormParams()->post(static::SAGE_LOGIN . "/services/oauth2/token", [
-            "grant_type"    => "authorization_code",
-            "client_id"     => $this->client_id,
-            "client_secret" => $this->client_secret,
-            "redirect_uri"  => $redirect_uri,
-            "code"          => $code
-        ]));
-    }
-
-    public function setInstance($access_token, $instance_url, $refresh_token = "")
-    {
-        $this->access_token     = $access_token;
-        $this->instance_url     = $instance_url;
-        $this->refresh_token    = $refresh_token;
-        return $this;
-    }
-
-    private function parseResponse($response)
-    {
-        if ($response->status() != 200) {
-            throw new WrongSageAccessTokenException();
-        }
-        $response = $response->json();
-        return $this->setInstance($response["access_token"], $response["instance_url"], $response["refresh_token"] ?? "");
-    }
-
-    public function getAuthHeaders()
-    {
-        return [
-            "Authorization" => "Bearer {$this->access_token}", "Content-Type" => "application/json"
-        ];
-    }
-
-    public function urlForResource($resource, $id = '')
-    {
-        return "{$this->instance_url}/services/data/v40.0/sobjects/{$resource}/{$id}";
-    }
-
-    public function urlForQueries()
-    {
-        return "{$this->instance_url}/services/data/v40.0/query/";
-    }
-
     public function find($resource, $id)
     {
-        return Zttp::withHeaders($this->getAuthHeaders())
-            ->get($this->urlForResource("{$resource}/{$id}"))
-            ->json();
+        $response = $this->call('get', $this->urlForResource("{$resource}/{$id}"), $this->getAuthHeaders());
+        return $response instanceof ZttpResponse ? $response->json() : null;
     }
 
     public function findByUID($resource, $uid, $fields = ["Id", "Name"])
@@ -114,41 +45,44 @@ class SageApi
     public function post($resource, $data)
     {
         $data     = $data instanceof Collection ? $data->toArray() : $data;
-        $response = Zttp::withHeaders($this->getAuthHeaders())->post($this->urlForResource($resource), $data);
-        $json     = $this->validateResponse($response, $resource);
-        return $json ? $json["id"] : "";
+        $response = $this->call('post', $this->urlForResource($resource), $data);
+        return $response instanceof ZttpResponse ? $response->json()["id"] : '';
     }
 
     public function patch($resource, $id, $data)
     {
         $data     = $data instanceof Collection ? $data->toArray() : $data;
-        $response = Zttp::withHeaders($this->getAuthHeaders())->patch($this->urlForResource($resource, $id), $data);
-        $json     = $this->validateResponse($response, $resource, 'update');
-        return $json ? $json["id"] : false;
+        $response = $this->call('patch', $this->urlForResource("{$resource}/{$id}"), $data);
+        return $response instanceof ZttpResponse ? $response->json() : false;
     }
 
     public function delete($resource, $id)
     {
-        $response = Zttp::withHeaders($this->getAuthHeaders())
-            ->delete($this->urlForResource("{$resource}/{$id}"));
-        if ($response->status() != Response::HTTP_NO_CONTENT) {
-            $this->log("SAGE-API: Failed to delete resource {$resource} with id {$id}: {$response->body()}");
-            return false;
-        }
-        return true;
+        return $this->call('delete', $this->urlForResource("{$resource}/{$id}"));
     }
 
-    private function validateResponse($response, $resource, $method = 'create')
+    private function call($method, $url, $data = null)
     {
-        $status = $response->status();
-        if ($status != 201 && $status != 204) {
-            if ($status == 401) {
-                dd('auth needed');
-            }// reauth with refresh token and recall
-            $this->log("SAGE-API: Failed to {$method} resource {$resource} with error {$status}: {$response->body()}");
+        $response = Zttp::withHeaders($this->getAuthHeaders())->$method($url, $data);
+        $status   = $response->status();
+        if ($status == Response::HTTP_UNAUTHORIZED) {
+            $this->refreshToken();
+            return $this->call($method, $url, $data);
+        } elseif ($status < Response::HTTP_OK || $status > Response::HTTP_NO_CONTENT) {
+            $this->log("SAGE-API: Failed to {$method} resource with error {$status}: {$response->body()}");
             return false;
         }
-        return $response->json();
+        return $response;
+    }
+
+    private function urlForResource($resource)
+    {
+        return "{$this->instance_url}/services/data/v40.0/sobjects/{$resource}";
+    }
+
+    private function urlForQueries()
+    {
+        return "{$this->instance_url}/services/data/v40.0/query/";
     }
 
     private function log($message)

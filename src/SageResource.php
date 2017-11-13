@@ -79,6 +79,7 @@ class SageResource
 
     public function update($attributes)
     {
+        $this->attributes = $this->attributes->merge($attributes);
         $this->api->patch(static::RESOURCE_NAME, $this->Id, $this->validate(collect($attributes), false));
         return $this;
     }
