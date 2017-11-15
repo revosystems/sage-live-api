@@ -49,6 +49,8 @@ class SageLiveClientsTest extends SageLiveBaseTest
         $this->assertNotFalse($this->object->id);
         $this->assertNotEmpty($this->object->tags);
         $this->assertEquals("Joan", $this->object->Name);
+        $client = (new SageClient($this->sageApi))->find($this->object->Id);
+        $this->assertEquals("Joan", $client->Name);
         $this->assertEquals($clients_count, $clientResource->count());
     }
 

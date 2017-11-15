@@ -17,14 +17,14 @@ class SageResource
     public $id;
     public $tags;
 
-    public function __construct(SageApi $api, $json = null)
+    public function __construct(SageResourceApi $api, $json = null)
     {
         $this->api        = $api;
         $this->attributes = collect($json);
         $this->fields     = collect($this->fields);
     }
 
-    public static function make(SageApi $api)
+    public static function make(SageResourceApi $api)
     {
         return new static($api);
     }
@@ -79,6 +79,7 @@ class SageResource
 
     public function update($attributes)
     {
+        $this->attributes = $this->attributes->merge($attributes);
         $this->api->patch(static::RESOURCE_NAME, $this->Id, $this->validate(collect($attributes), false));
         return $this;
     }

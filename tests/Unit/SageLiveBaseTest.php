@@ -4,12 +4,12 @@ namespace Tests\Unit;
 
 use Dotenv\Dotenv;
 use PHPUnit\Framework\TestCase;
-use RevoSystems\SageLiveApi\SageApi;
+use RevoSystems\SageLiveApi\SageResourceApi;
 
 class SageLiveBaseTest extends TestCase
 {
     protected $object;
-    protected $sageApi = null;
+    protected $sageApi;
 
     public function setUp()
     {
@@ -21,7 +21,7 @@ class SageLiveBaseTest extends TestCase
     public function getSageApi()
     {
         if (! $this->sageApi) {
-            $this->sageApi = new SageApi(getenv('CLIENT_ID'), getenv('CLIENT_SECRET'));
+            $this->sageApi = new SageResourceApi(getenv('CLIENT_ID'), getenv('CLIENT_SECRET'));
         }
         return $this->sageApi;
     }
@@ -36,7 +36,7 @@ class SageLiveBaseTest extends TestCase
 
     protected function sageLogin()
     {
-        return $this->sageApi->loginBasic(getenv('TEST_SAGE_USERNAME'), getenv('TEST_SAGE_PASSWORD'), getenv('TEST_SAGE_SECURITY_TOKEN'));
+        return $this->sageApi->sageAuth->loginBasic(getenv('TEST_SAGE_USERNAME'), getenv('TEST_SAGE_PASSWORD'), getenv('TEST_SAGE_SECURITY_TOKEN'));
     }
 
     /**
