@@ -7,27 +7,26 @@ use Illuminate\Support\Collection;
 use Zttp\Zttp;
 use Zttp\ZttpResponse;
 
-class SageApi
+class SageResourceApi
 {
-    use SageApiAuthTrait;
     public $log      = [];
+    public $sageAuth;
 
     public function __construct($client_id, $client_secret)
     {
-        $this->client_id        = $client_id;
-        $this->client_secret    = $client_secret;
+        $this->sageAuth         = new SageLiveAuth($client_id, $client_secret);
     }
 
     public function find($resource, $id)
     {
-        $response = $this->call('get', $this->urlForResource("{$resource}/{$id}"), $this->getAuthHeaders());
+        $response = $this->call('get', $this->urlForResource("{$resource}/{$id}"), $this->sageAuth->getAuthHeaders());
         return $response instanceof ZttpResponse ? $response->json() : null;
     }
 
     public function findByUID($resource, $uid, $fields = ["Id", "Name"])
     {
         try {
-            return Zttp::withHeaders($this->getAuthHeaders())
+            return Zttp::withHeaders($this->sageAuth->getAuthHeaders())
                 ->get($this->urlForQueries() . "?q=SELECT+" . $this->getCollection($fields) . "+from+{$resource}+WHERE+s2cor__UID__c+LIKE+'{$uid}'+AND+isDeleted+=+false")
                 ->json();
         } catch (\Exception $e) {
@@ -37,7 +36,7 @@ class SageApi
 
     public function get($resource, $fields = ["Id", "Name"])
     {
-        return Zttp::withHeaders($this->getAuthHeaders())
+        return Zttp::withHeaders($this->sageAuth->getAuthHeaders())
             ->get($this->urlForQueries() . "?q=SELECT+" . $this->getCollection($fields) . "+from+{$resource}+WHERE+isDeleted+=+false")
             ->json();
     }
@@ -63,10 +62,10 @@ class SageApi
 
     private function call($method, $url, $data = null)
     {
-        $response = Zttp::withHeaders($this->getAuthHeaders())->$method($url, $data);
+        $response = Zttp::withHeaders($this->sageAuth->getAuthHeaders())->$method($url, $data);
         $status   = $response->status();
         if ($status == Response::HTTP_UNAUTHORIZED) {
-            $this->refreshToken();
+            $this->sageAuth->refreshToken();
             return $this->call($method, $url, $data);
         } elseif ($status < Response::HTTP_OK || $status > Response::HTTP_NO_CONTENT) {
             $this->log("SAGE-API: Failed to {$method} resource with error {$status}: {$response->body()}");
@@ -77,12 +76,12 @@ class SageApi
 
     private function urlForResource($resource)
     {
-        return "{$this->instance_url}/services/data/v40.0/sobjects/{$resource}";
+        return "{$this->sageAuth->instance_url}/services/data/v40.0/sobjects/{$resource}";
     }
 
     private function urlForQueries()
     {
-        return "{$this->instance_url}/services/data/v40.0/query/";
+        return "{$this->sageAuth->instance_url}/services/data/v40.0/query/";
     }
 
     private function log($message)

@@ -6,7 +6,7 @@ class SageParentResource extends SageResource
 {
     protected $items;
 
-    public function __construct(SageApi $api, $json = null)
+    public function __construct(SageResourceApi $api, $json = null)
     {
         if (isset($json["items"])) {
             $this->items = collect($json["items"]);

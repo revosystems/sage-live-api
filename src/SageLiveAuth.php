@@ -6,7 +6,7 @@ use Illuminate\Http\Response;
 use RevoSystems\SageLiveApi\Exceptions\WrongSageAccessTokenException;
 use Zttp\Zttp;
 
-trait SageApiAuthTrait
+class SageLiveAuth
 {
     protected $sageLogin = "https://login.salesforce.com";
     protected $client_id;
@@ -15,6 +15,12 @@ trait SageApiAuthTrait
     public $access_token;
     public $refresh_token;
     public $instance_url;
+
+    public function __construct($client_id, $client_secret)
+    {
+        $this->client_id        = $client_id;
+        $this->client_secret    = $client_secret;
+    }
 
     public function loginBasic($username, $password, $securityToken)
     {
@@ -61,14 +67,14 @@ trait SageApiAuthTrait
         return $this->setInstance($response["access_token"], $response["instance_url"], $response["refresh_token"] ?? "");
     }
 
-    private function getAuthHeaders()
+    public function getAuthHeaders()
     {
         return [
             "Authorization" => "Bearer {$this->access_token}", "Content-Type" => "application/json"
         ];
     }
 
-    private function refreshToken()
+    public function refreshToken()
     {
         return $this->parseResponse(Zttp::asFormParams()->post($this->sageLogin . "/services/oauth2/token", [
             "grant_type"    => 'refresh_token',

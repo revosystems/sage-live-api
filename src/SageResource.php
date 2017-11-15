@@ -17,14 +17,14 @@ class SageResource
     public $id;
     public $tags;
 
-    public function __construct(SageApi $api, $json = null)
+    public function __construct(SageResourceApi $api, $json = null)
     {
         $this->api        = $api;
         $this->attributes = collect($json);
         $this->fields     = collect($this->fields);
     }
 
-    public static function make(SageApi $api)
+    public static function make(SageResourceApi $api)
     {
         return new static($api);
     }
