@@ -50,7 +50,7 @@ class SageLiveAuth
         ]));
     }
 
-    public function setInstance($access_token, $instance_url, $refresh_token = "")
+    public function setAuthTokens($access_token, $instance_url, $refresh_token = "")
     {
         $this->access_token     = $access_token;
         $this->instance_url     = $instance_url;
@@ -64,7 +64,7 @@ class SageLiveAuth
             throw new WrongSageAccessTokenException();
         }
         $response = $response->json();
-        return $this->setInstance($response["access_token"], $response["instance_url"], $response["refresh_token"] ?? "");
+        return $this->setAuthTokens($response["access_token"], $response["instance_url"], $response["refresh_token"] ?? "");
     }
 
     public function getAuthHeaders()

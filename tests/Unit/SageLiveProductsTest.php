@@ -10,10 +10,10 @@ class SageLiveProductsTest extends SageLiveBaseTest
     public function can_create_sage_product()
     {
         $this->sageLogin();
-        $clientResource = (new SageProduct($this->sageApi));
+        $clientResource = (new SageProduct($this->api));
         $products_count = $clientResource->count();
 
-        $this->object = (new SageProduct($this->sageApi, [
+        $this->object = (new SageProduct($this->api, [
             "Name"      => "Nike Nuce",
             "IsActive"  => 1,
         ]))->create();
@@ -28,24 +28,24 @@ class SageLiveProductsTest extends SageLiveBaseTest
     {
         $this->sageLogin();
 
-        $this->object = (new SageProduct($this->sageApi, [
+        $this->object = (new SageProduct($this->api, [
             "Name"      => "Nike Tomal",
             "IsActive"  => 1,
         ]))->create();
 
-        $this->assertGreaterThanOrEqual(1, (new SageProduct($this->sageApi))->count());
+        $this->assertGreaterThanOrEqual(1, (new SageProduct($this->api))->count());
     }
 
     /** @test */
     public function can_see_a_sage_product()
     {
         $this->sageLogin();
-        $this->object = (new SageProduct($this->sageApi, [
+        $this->object = (new SageProduct($this->api, [
             "Name"      => "Nike Tomaleos",
             "IsActive"  => 1,
         ]))->create();
 
-        $productRetrieved = (new SageProduct($this->sageApi))->find($this->object->Id);
+        $productRetrieved = (new SageProduct($this->api))->find($this->object->Id);
         $this->assertEquals($this->object->Id, $productRetrieved->Id);
         $this->assertEquals('Nike Tomaleos', $productRetrieved->Name);
     }
@@ -54,11 +54,11 @@ class SageLiveProductsTest extends SageLiveBaseTest
     public function can_delete_sage_product()
     {
         $this->sageLogin();
-        $this->object = (new SageProduct($this->sageApi, [
+        $this->object = (new SageProduct($this->api, [
             "Name"      => "Nike Tomaleos",
             "IsActive"  => 1,
         ]))->create();
-        $sageResource   = (new SageProduct($this->sageApi));
+        $sageResource   = (new SageProduct($this->api));
         $products_count = $sageResource->count();
 
         $this->object->destroy();

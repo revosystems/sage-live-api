@@ -17,6 +17,11 @@ class SageResource
     public $id;
     public $tags;
 
+    /**
+     * SageResource constructor.
+     * @param SageResourceApi $api
+     * @param null $json
+     */
     public function __construct(SageResourceApi $api, $json = null)
     {
         $this->api        = $api;
@@ -24,6 +29,10 @@ class SageResource
         $this->fields     = collect($this->fields);
     }
 
+    /**
+     * @param SageResourceApi $api
+     * @return static
+     */
     public static function make(SageResourceApi $api)
     {
         return new static($api);
@@ -71,32 +80,24 @@ class SageResource
         );
     }
 
+    /**
+     * @param array $tags
+     * @return SageResource
+     */
     public function create($tags = [])
     {
         $this->Id = $this->api->post(static::RESOURCE_NAME, $this->validate());
         return $this->Id != "" ? $this->createTags($tags) : $this;
     }
 
+    /**
+     * @param $attributes
+     * @return $this
+     */
     public function update($attributes)
     {
         $this->attributes = $this->attributes->merge($attributes);
         $this->api->patch(static::RESOURCE_NAME, $this->Id, $this->validate(collect($attributes), false));
-        return $this;
-    }
-
-    public function createTags($tags = [])
-    {
-        if ($this->tag) {
-            array_push($tags, $this->tag);
-        }
-
-        $this->tags = collect($tags)->map(function ($tag) {
-            return (new SageTag($this->api, [
-                "s2cor__Dimension__c"   => (new SageDimension($this->api))->findByUID($tag["UID"])->Id,
-                "s2cor__Active__c"      => 1,
-                $tag["Object"]          => $this->Id,
-            ]))->create();
-        });
         return $this;
     }
 
@@ -115,4 +116,21 @@ class SageResource
         }
         return null;
     }
+
+    private function createTags($tags = [])
+    {
+        if ($this->tag) {
+            array_push($tags, $this->tag);
+        }
+
+        $this->tags = collect($tags)->map(function ($tag) {
+            return (new SageTag($this->api, [
+                "s2cor__Dimension__c"   => (new SageDimension($this->api))->findByUID($tag["UID"])->Id,
+                "s2cor__Active__c"      => 1,
+                $tag["Object"]          => $this->Id,
+            ]))->create();
+        });
+        return $this;
+    }
+
 }

@@ -6,11 +6,11 @@ use RevoSystems\SageLiveApi\SObjects\SageClient;
 
 class SageLiveClientsTest extends SageLiveBaseTest
 {
-    /** @test */
+    ///** @test */
     public function can_delete_all_sage_clients()
     {
         $this->sageLogin();
-        (new SageClient($this->sageApi))->all()->each(function ($client) {
+        (new SageClient($this->api))->all()->each(function ($client) {
             $client->destroy();
         });
         $this->object = null;
@@ -20,10 +20,10 @@ class SageLiveClientsTest extends SageLiveBaseTest
     public function can_create_sage_client()
     {
         $this->sageLogin();
-        $clientResource = (new SageClient($this->sageApi));
+        $clientResource = (new SageClient($this->api));
         $clients_count  = $clientResource->count();
 
-        $this->object = (new SageClient($this->sageApi, [
+        $this->object = (new SageClient($this->api, [
             "Name" => "Jordi",
         ]))->create();
 
@@ -36,8 +36,8 @@ class SageLiveClientsTest extends SageLiveBaseTest
     public function can_update_sage_client()
     {
         $this->sageLogin();
-        $clientResource = (new SageClient($this->sageApi));
-        $this->object   = (new SageClient($this->sageApi, [
+        $clientResource = (new SageClient($this->api));
+        $this->object   = (new SageClient($this->api, [
             "Name" => "Jordi",
         ]))->create();
         $clients_count  = $clientResource->count();
@@ -49,7 +49,7 @@ class SageLiveClientsTest extends SageLiveBaseTest
         $this->assertNotFalse($this->object->id);
         $this->assertNotEmpty($this->object->tags);
         $this->assertEquals("Joan", $this->object->Name);
-        $client = (new SageClient($this->sageApi))->find($this->object->Id);
+        $client = (new SageClient($this->api))->find($this->object->Id);
         $this->assertEquals("Joan", $client->Name);
         $this->assertEquals($clients_count, $clientResource->count());
     }
@@ -59,22 +59,23 @@ class SageLiveClientsTest extends SageLiveBaseTest
     {
         $this->sageLogin();
 
-        $this->object = (new SageClient($this->sageApi, [
+        $this->object = (new SageClient($this->api, [
             "Name" => "Jordi",
         ]))->create();
 
-        $this->assertGreaterThanOrEqual(1, (new SageClient($this->sageApi))->count());
+        $this->assertGreaterThanOrEqual(1, (new SageClient($this->api))->count());
     }
 
     /** @test */
     public function can_see_a_sage_client()
     {
         $this->sageLogin();
-        $this->object = (new SageClient($this->sageApi, [
+        $this->object = (new SageClient($this->api, [
             "Name" => "Jordi",
         ]))->create();
 
-        $client = (new SageClient($this->sageApi))->find($this->object->Id);
+        $client = (new SageClient($this->api))->find($this->object->Id);
+
         $this->assertEquals($this->object->Id, $client->Id);
         $this->assertEquals('Jordi', $client->Name);
     }
@@ -83,13 +84,13 @@ class SageLiveClientsTest extends SageLiveBaseTest
     public function can_delete_sage_client()
     {
         $this->sageLogin();
-        $this->object = (new SageClient($this->sageApi, [
+        $this->object = (new SageClient($this->api, [
             "Name" => "Jordi",
         ]))->create();
-        $clients_count = (new SageClient($this->sageApi))->count();
+        $clients_count = (new SageClient($this->api))->count();
 
         $this->object->destroy();
-        $actual_clients_count =  (new SageClient($this->sageApi))->count();
+        $actual_clients_count =  (new SageClient($this->api))->count();
 
         $this->assertEquals($clients_count - 1, $actual_clients_count);
         $this->object = null;
