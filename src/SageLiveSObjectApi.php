@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 use Zttp\Zttp;
 use Zttp\ZttpResponse;
 
-class SageResourceApi
+class SageLiveSObjectApi
 {
     public $log      = [];
     public $auth;

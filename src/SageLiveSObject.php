@@ -2,11 +2,11 @@
 
 namespace RevoSystems\SageLiveApi;
 
-use RevoSystems\SageLiveApi\SObjects\SageDimension;
-use RevoSystems\SageLiveApi\SObjects\SageTag;
+use RevoSystems\SageLiveApi\SObjects\SageLiveDimension;
+use RevoSystems\SageLiveApi\SObjects\SageLiveTag;
 use RevoSystems\SageLiveApi\Validators\SageValidator;
 
-class SageResource
+class SageLiveSObject
 {
     const RESOURCE_NAME = '';
     protected $api;
@@ -19,10 +19,10 @@ class SageResource
 
     /**
      * SageResource constructor.
-     * @param SageResourceApi $api
+     * @param SageLiveSObjectApi $api
      * @param null $json
      */
-    public function __construct(SageResourceApi $api, $json = null)
+    public function __construct(SageLiveSObjectApi $api, $json = null)
     {
         $this->api        = $api;
         $this->attributes = collect($json);
@@ -30,10 +30,10 @@ class SageResource
     }
 
     /**
-     * @param SageResourceApi $api
+     * @param SageLiveSObjectApi $api
      * @return static
      */
-    public static function make(SageResourceApi $api)
+    public static function make(SageLiveSObjectApi $api)
     {
         return new static($api);
     }
@@ -124,8 +124,8 @@ class SageResource
         }
 
         $this->tags = collect($tags)->map(function ($tag) {
-            return (new SageTag($this->api, [
-                "s2cor__Dimension__c"   => (new SageDimension($this->api))->findByUID($tag["UID"])->Id,
+            return (new SageLiveTag($this->api, [
+                "s2cor__Dimension__c"   => (new SageLiveDimension($this->api))->findByUID($tag["UID"])->Id,
                 "s2cor__Active__c"      => 1,
                 $tag["Object"]          => $this->Id,
             ]))->create();

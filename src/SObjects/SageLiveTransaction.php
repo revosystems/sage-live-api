@@ -2,9 +2,9 @@
 
 namespace RevoSystems\SageLiveApi\SObjects;
 
-use RevoSystems\SageLiveApi\SageParentResource;
+use RevoSystems\SageLiveApi\SageLiveParentSObject;
 
-class SageTransaction extends SageParentResource
+class SageLiveTransaction extends SageLiveParentSObject
 {
     const RESOURCE_NAME = "s2cor__Sage_INV_Trade_Document__c";
     protected $tag      = ["UID" => 'SalesInvoiceNumber', "Object" => "s2cor__Transaction__c"];

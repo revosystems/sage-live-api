@@ -2,9 +2,9 @@
 
 namespace RevoSystems\SageLiveApi\SObjects;
 
-use RevoSystems\SageLiveApi\SageResource;
+use RevoSystems\SageLiveApi\SageLiveSObject;
 
-class SageTag extends SageResource
+class SageLiveTag extends SageLiveSObject
 {
     const RESOURCE_NAME = "s2cor__Sage_ACC_Tag__c";
 

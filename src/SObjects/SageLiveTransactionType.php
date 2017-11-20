@@ -2,9 +2,9 @@
 
 namespace RevoSystems\SageLiveApi\SObjects;
 
-use RevoSystems\SageLiveApi\SageResource;
+use RevoSystems\SageLiveApi\SageLiveSObject;
 
-class SageTransactionType extends SageResource
+class SageLiveTransactionType extends SageLiveSObject
 {
     const RESOURCE_NAME = "s2cor__Sage_INV_Trade_Document_Type__c";
     protected $fields   = [

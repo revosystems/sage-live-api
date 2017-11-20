@@ -5,7 +5,7 @@ namespace Tests\Unit;
 use Dotenv\Dotenv;
 use PHPUnit\Framework\TestCase;
 use RevoSystems\SageLiveApi\SageLiveAuth;
-use RevoSystems\SageLiveApi\SageResourceApi;
+use RevoSystems\SageLiveApi\SageLiveSObjectApi;
 
 class SageLiveBaseTest extends TestCase
 {
@@ -22,7 +22,7 @@ class SageLiveBaseTest extends TestCase
     public function getSageApi()
     {
         if (! $this->api) {
-            $this->api = new SageResourceApi(new SageLiveAuth(getenv('CLIENT_ID'), getenv('CLIENT_SECRET')));
+            $this->api = new SageLiveSObjectApi(new SageLiveAuth(getenv('CLIENT_ID'), getenv('CLIENT_SECRET')));
         }
         return $this->api;
     }
