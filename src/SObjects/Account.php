@@ -2,9 +2,9 @@
 
 namespace RevoSystems\SageLiveApi\SObjects;
 
-use RevoSystems\SageLiveApi\SageLiveSObject;
+use RevoSystems\SageLiveApi\SObject;
 
-class SageLiveAccount extends SageLiveSObject
+class Account extends SObject
 {
     const RESOURCE_NAME = "Account";
 

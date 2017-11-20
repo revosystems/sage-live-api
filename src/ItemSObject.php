@@ -2,7 +2,7 @@
 
 namespace RevoSystems\SageLiveApi;
 
-class SageLiveItemSObject extends SageLiveSObject
+class ItemSObject extends SObject
 {
     const PARENT_ID     = null;
 

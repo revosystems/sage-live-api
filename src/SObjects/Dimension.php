@@ -2,9 +2,9 @@
 
 namespace RevoSystems\SageLiveApi\SObjects;
 
-use RevoSystems\SageLiveApi\SageLiveSObject;
+use RevoSystems\SageLiveApi\SObject;
 
-class SageLiveDimension extends SageLiveSObject
+class Dimension extends SObject
 {
     const RESOURCE_NAME = "s2cor__Sage_ACC_Dimension__c";
 

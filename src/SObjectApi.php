@@ -7,12 +7,12 @@ use Illuminate\Support\Collection;
 use Zttp\Zttp;
 use Zttp\ZttpResponse;
 
-class SageLiveSObjectApi
+class SObjectApi
 {
     public $log      = [];
     public $auth;
 
-    public function __construct(SageLiveAuth $auth)
+    public function __construct(Auth $auth)
     {
         $this->auth         = $auth;
     }

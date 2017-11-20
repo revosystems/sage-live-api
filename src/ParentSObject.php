@@ -2,11 +2,11 @@
 
 namespace RevoSystems\SageLiveApi;
 
-class SageLiveParentSObject extends SageLiveSObject
+class ParentSObject extends SObject
 {
     protected $items;
 
-    public function __construct(SageLiveSObjectApi $api, $json = null)
+    public function __construct(SObjectApi $api, $json = null)
     {
         if (isset($json["items"])) {
             $this->items = collect($json["items"]);

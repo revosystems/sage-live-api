@@ -6,7 +6,7 @@ use Illuminate\Http\Response;
 use RevoSystems\SageLiveApi\Exceptions\WrongSageAccessTokenException;
 use Zttp\Zttp;
 
-class SageLiveAuth
+class Auth
 {
     protected $sageLogin = "https://login.salesforce.com";
     protected $client_id;

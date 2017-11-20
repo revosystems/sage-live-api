@@ -2,11 +2,11 @@
 
 namespace RevoSystems\SageLiveApi;
 
-use RevoSystems\SageLiveApi\SObjects\SageLiveDimension;
-use RevoSystems\SageLiveApi\SObjects\SageLiveTag;
-use RevoSystems\SageLiveApi\Validators\SageValidator;
+use RevoSystems\SageLiveApi\SObjects\Dimension;
+use RevoSystems\SageLiveApi\SObjects\Tag;
+use RevoSystems\SageLiveApi\Validators\Validator;
 
-class SageLiveSObject
+class SObject
 {
     const RESOURCE_NAME = '';
     protected $api;
@@ -18,11 +18,11 @@ class SageLiveSObject
     public $tags;
 
     /**
-     * SageResource constructor.
-     * @param SageLiveSObjectApi $api
+     * SageLiveSObject constructor.
+     * @param SObjectApi $api
      * @param null $json
      */
-    public function __construct(SageLiveSObjectApi $api, $json = null)
+    public function __construct(SObjectApi $api, $json = null)
     {
         $this->api        = $api;
         $this->attributes = collect($json);
@@ -30,17 +30,17 @@ class SageLiveSObject
     }
 
     /**
-     * @param SageLiveSObjectApi $api
+     * @param SObjectApi $api
      * @return static
      */
-    public static function make(SageLiveSObjectApi $api)
+    public static function make(SObjectApi $api)
     {
         return new static($api);
     }
 
     public function validate($attributes = false, $withRequired = true)
     {
-        return (new SageValidator($this->fields, $attributes ? : $this->attributes))->validate($withRequired);
+        return (new Validator($this->fields, $attributes ? : $this->attributes))->validate($withRequired);
     }
 
     public function all()
@@ -82,7 +82,7 @@ class SageLiveSObject
 
     /**
      * @param array $tags
-     * @return SageResource
+     * @return SObject
      */
     public function create($tags = [])
     {
@@ -124,8 +124,8 @@ class SageLiveSObject
         }
 
         $this->tags = collect($tags)->map(function ($tag) {
-            return (new SageLiveTag($this->api, [
-                "s2cor__Dimension__c"   => (new SageLiveDimension($this->api))->findByUID($tag["UID"])->Id,
+            return (new Tag($this->api, [
+                "s2cor__Dimension__c"   => (new Dimension($this->api))->findByUID($tag["UID"])->Id,
                 "s2cor__Active__c"      => 1,
                 $tag["Object"]          => $this->Id,
             ]))->create();
