@@ -31,7 +31,7 @@ class SageLiveTransactionsTest extends SageLiveBaseTest
         $this->sageLogin();
         $transactions_count       = Transaction::make($this->api)->countWithFields();
         $transaction_items_count  = TransactionItem::make($this->api)->countWithFields();
-        $this->client             =   (new Account($this->api, ["Name" => "Jordi"]))->create();
+        $this->client             = (new Account($this->api, ["Name" => "Jordi"]))->create();
         $this->type               = (new TransactionType($this->api, [
             "s2cor__Active__c"                      => 1,
         ]))->create();

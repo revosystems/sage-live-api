@@ -13,6 +13,7 @@ class SObject
     protected $attributes;
     protected $fields;
     protected $tag = null;
+    protected $queryParams  = '';
 
     public $id;
     public $tags;
@@ -43,12 +44,24 @@ class SObject
         return (new Validator($this->fields, $attributes ? : $this->attributes))->validate($withRequired);
     }
 
-    public function all()
+    public function all($fields = ["Id", "Name"])
     {
-        $attributes = collect($this->api->get(static::RESOURCE_NAME)["records"]);
+        $this->queryParams = '';
+        return $this->get($fields);
+    }
+
+    public function get($fields = ["Id", "Name"])
+    {
+        $attributes = collect($this->api->get(static::RESOURCE_NAME, $fields, $this->queryParams)["records"]);
         return $attributes->map(function ($data) {
             return new static($this->api, $data);
         });
+    }
+
+    public function where($query)
+    {
+        $this->queryParams .= "+AND+" . str_replace(' ', '+', $query);
+        return $this;
     }
 
     public function count()

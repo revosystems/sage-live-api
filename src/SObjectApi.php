@@ -34,10 +34,10 @@ class SObjectApi
         }
     }
 
-    public function get($resource, $fields = ["Id", "Name"])
+    public function get($resource, $fields = ["Id", "Name"], $query = '')
     {
         return Zttp::withHeaders($this->auth->getAuthHeaders())
-            ->get($this->urlForQueries() . "?q=SELECT+" . $this->getCollection($fields) . "+from+{$resource}+WHERE+isDeleted+=+false")
+            ->get($this->urlForQueries() . "?q=SELECT+" . $this->getCollection($fields) . "+from+{$resource}+WHERE+isDeleted+=+false{$query}")
             ->json();
     }
 
