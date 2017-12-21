@@ -2,9 +2,9 @@
 
 namespace RevoSystems\SageLiveApi\SObjects;
 
-use RevoSystems\SageLiveApi\SageItemResource;
+use RevoSystems\SageLiveApi\ItemSObject;
 
-class SageTransactionItem extends SageItemResource
+class TransactionItem extends ItemSObject
 {
     const RESOURCE_NAME = "s2cor__Sage_INV_Trade_Document_Item__c";
     const PARENT_ID     = "s2cor__Trade_Document__c";

@@ -2,7 +2,7 @@
 
 namespace RevoSystems\SageLiveApi\Validators;
 
-class SageValidator
+class Validator
 {
     protected $fields;
     protected $attributes;

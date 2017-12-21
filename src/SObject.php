@@ -2,27 +2,28 @@
 
 namespace RevoSystems\SageLiveApi;
 
-use RevoSystems\SageLiveApi\SObjects\SageDimension;
-use RevoSystems\SageLiveApi\SObjects\SageTag;
-use RevoSystems\SageLiveApi\Validators\SageValidator;
+use RevoSystems\SageLiveApi\SObjects\Dimension;
+use RevoSystems\SageLiveApi\SObjects\Tag;
+use RevoSystems\SageLiveApi\Validators\Validator;
 
-class SageResource
+class SObject
 {
     const RESOURCE_NAME = '';
     protected $api;
     protected $attributes;
     protected $fields;
     protected $tag = null;
+    protected $queryParams  = '';
 
     public $id;
     public $tags;
 
     /**
-     * SageResource constructor.
-     * @param SageResourceApi $api
+     * SageLiveSObject constructor.
+     * @param SObjectApi $api
      * @param null $json
      */
-    public function __construct(SageResourceApi $api, $json = null)
+    public function __construct(SObjectApi $api, $json = null)
     {
         $this->api        = $api;
         $this->attributes = collect($json);
@@ -30,25 +31,37 @@ class SageResource
     }
 
     /**
-     * @param SageResourceApi $api
+     * @param SObjectApi $api
      * @return static
      */
-    public static function make(SageResourceApi $api)
+    public static function make(SObjectApi $api)
     {
         return new static($api);
     }
 
     public function validate($attributes = false, $withRequired = true)
     {
-        return (new SageValidator($this->fields, $attributes ? : $this->attributes))->validate($withRequired);
+        return (new Validator($this->fields, $attributes ? : $this->attributes))->validate($withRequired);
     }
 
-    public function all()
+    public function all($fields = ["Id", "Name"])
     {
-        $attributes = collect($this->api->get(static::RESOURCE_NAME)["records"]);
+        $this->queryParams = '';
+        return $this->get($fields);
+    }
+
+    public function get($fields = ["Id", "Name"])
+    {
+        $attributes = collect($this->api->get(static::RESOURCE_NAME, $fields, $this->queryParams)["records"]);
         return $attributes->map(function ($data) {
             return new static($this->api, $data);
         });
+    }
+
+    public function where($query)
+    {
+        $this->queryParams .= "+AND+" . str_replace(' ', '+', $query);
+        return $this;
     }
 
     public function count()
@@ -68,6 +81,9 @@ class SageResource
 
     public function find($id)
     {
+        if (! $id) {
+            return new static($this->api);
+        }
         return new static($this->api,
             $this->api->find(static::RESOURCE_NAME, $id)
         );
@@ -75,6 +91,9 @@ class SageResource
 
     public function findByUID($uid)
     {
+        if (! $uid) {
+            return new static($this->api);
+        }
         return new static($this->api,
             $this->api->findByUID(static::RESOURCE_NAME, $uid)['records'][0]
         );
@@ -82,7 +101,7 @@ class SageResource
 
     /**
      * @param array $tags
-     * @return SageResource
+     * @return SObject
      */
     public function create($tags = [])
     {
@@ -122,10 +141,9 @@ class SageResource
         if ($this->tag) {
             array_push($tags, $this->tag);
         }
-
         $this->tags = collect($tags)->map(function ($tag) {
-            return (new SageTag($this->api, [
-                "s2cor__Dimension__c"   => (new SageDimension($this->api))->findByUID($tag["UID"])->Id,
+            return (new Tag($this->api, [
+                "s2cor__Dimension__c"   => (new Dimension($this->api))->findByUID($tag["UID"])->Id,
                 "s2cor__Active__c"      => 1,
                 $tag["Object"]          => $this->Id,
             ]))->create();

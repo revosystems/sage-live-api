@@ -2,9 +2,9 @@
 
 namespace RevoSystems\SageLiveApi\SObjects;
 
-use RevoSystems\SageLiveApi\SageResource;
+use RevoSystems\SageLiveApi\SObject;
 
-class SageProduct extends SageResource
+class Product extends SObject
 {
     const RESOURCE_NAME = "Product2";
     protected $tag      = ["UID" => 'Product', "Object" => "s2cor__Product__c"];
