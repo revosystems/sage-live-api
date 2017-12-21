@@ -81,6 +81,9 @@ class SObject
 
     public function find($id)
     {
+        if (! $id) {
+            return new static($this->api);
+        }
         return new static($this->api,
             $this->api->find(static::RESOURCE_NAME, $id)
         );
@@ -88,6 +91,9 @@ class SObject
 
     public function findByUID($uid)
     {
+        if (! $uid) {
+            return new static($this->api);
+        }
         return new static($this->api,
             $this->api->findByUID(static::RESOURCE_NAME, $uid)['records'][0]
         );
@@ -135,7 +141,6 @@ class SObject
         if ($this->tag) {
             array_push($tags, $this->tag);
         }
-
         $this->tags = collect($tags)->map(function ($tag) {
             return (new Tag($this->api, [
                 "s2cor__Dimension__c"   => (new Dimension($this->api))->findByUID($tag["UID"])->Id,
