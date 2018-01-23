@@ -4,22 +4,11 @@
     "type": "library",
     "keywords": ["framework", "laravel"],
     "license": "MIT",
-    "repositories": [
-        {
-            "type" : "path",
-            "url"  : "sage-api",
-            "options": {
-                "symlink": true
-            }
-        }
-    ],
     "require": {
         "php": ">=5.6.4",
-        "revosystems/sage-api": "@dev"
+        "revosystems/sage-api": "^1.0"
     },
     "require-dev": {
-        "fzaninotto/faker": "~1.4",
-        "mockery/mockery": "0.9.*",
         "vlucas/phpdotenv": "^2.4",
         "phpunit/phpunit": "~5.7"
     },
