@@ -5,6 +5,7 @@ namespace RevoSystems\SageLiveApi;
 use RevoSystems\SageLiveApi\SObjects\Dimension;
 use RevoSystems\SageLiveApi\SObjects\Tag;
 use RevoSystems\SageLiveApi\Validators\Validator;
+use RevoSystems\SageApi\Api;
 
 class SObject
 {
@@ -20,10 +21,10 @@ class SObject
 
     /**
      * SageLiveSObject constructor.
-     * @param SObjectApi $api
+     * @param Api $api
      * @param null $json
      */
-    public function __construct(SObjectApi $api, $json = null)
+    public function __construct(Api $api, $json = null)
     {
         $this->api        = $api;
         $this->attributes = collect($json);
@@ -31,10 +32,10 @@ class SObject
     }
 
     /**
-     * @param SObjectApi $api
+     * @param Api $api
      * @return static
      */
-    public static function make(SObjectApi $api)
+    public static function make(Api $api)
     {
         return new static($api);
     }
